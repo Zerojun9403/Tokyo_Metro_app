@@ -136,6 +136,8 @@ const STATION_NAMES: Record<string, { ja: string; ko: string }> = {
   Ogikubo: { ja: "荻窪", ko: "오기쿠보" },
   Honancho: { ja: "方南町", ko: "호난초" },
   NakanoSakaue: { ja: "中野坂上", ko: "나카노사카우에" },
+  NakanoFujimicho: { ja: "中野富士見町", ko: "나카노후지미초" },
+  NakanoShimbashi: { ja: "中野新橋", ko: "나카노신바시" },
 };
 
 function getConnectingStation(
@@ -458,126 +460,157 @@ export function MarunouchiStationPanel({
                   <h3 className="text-xl font-black tracking-tight text-zinc-950">
                     운행 방향
                   </h3>
-                  <span className="text-sm text-zinc-400">Direction</span>
+                  <span className="text-sm font-medium text-zinc-400">
+                    Direction
+                  </span>
                 </div>
 
                 {timetable && timetable.directions.length > 0 ? (
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {timetable.directions.map((direction, index) => {
-                      const directionKey = direction.direction ?? "";
-                      const info = DIRECTION_INFO[directionKey];
-                      const right = info?.side === "right";
+                    {[...timetable.directions]
+                      .sort((a, b) => {
+                        const order: Record<string, number> = {
+                          Ogikubo: 0,
+                          Honancho: 0,
+                          NakanoSakaue: 0,
+                          Ikebukuro: 1,
+                        };
 
-                      return (
-                        <Card
-                          key={`${directionKey}-${index}`}
-                          className="rounded-3xl border-zinc-200 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] transition-all hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
-                        >
-                          <CardContent
-                            className={`p-5 sm:p-6 ${right ? "text-right" : ""}`}
+                        return (
+                          (order[a.direction ?? ""] ?? 99) -
+                          (order[b.direction ?? ""] ?? 99)
+                        );
+                      })
+                      .map((direction, index) => {
+                        const directionKey = direction.direction ?? "";
+                        const info = DIRECTION_INFO[directionKey];
+                        const right = info?.side === "right";
+
+                        return (
+                          <Card
+                            key={`${directionKey}-${index}`}
+                            className="overflow-hidden rounded-[28px] border-zinc-200 bg-white shadow-[0_3px_14px_rgba(0,0,0,0.04)]"
                           >
-                            <div
-                              className={`flex items-center gap-3 ${
-                                right ? "justify-end" : "justify-start"
-                              }`}
-                            >
-                              {!right && (
-                                <ArrowLeft className="h-5 w-5 text-zinc-600" />
-                              )}
-
-                              <span
-                                className="h-2.5 w-2.5 rounded-full"
-                                style={{ backgroundColor: MARUNOUCHI_COLOR }}
-                              />
-
-                              <span
-                                className="text-sm font-black"
-                                style={{ color: MARUNOUCHI_COLOR }}
+                            <CardContent className="p-6">
+                              <div
+                                className={right ? "text-right" : "text-left"}
                               >
-                                {info?.code ?? "M"}
-                              </span>
+                                <div
+                                  className={`flex items-center gap-3 ${
+                                    right ? "justify-end" : "justify-start"
+                                  }`}
+                                >
+                                  {!right && (
+                                    <ArrowLeft className="h-5 w-5 text-zinc-500" />
+                                  )}
 
-                              {right && (
-                                <ArrowRight className="h-5 w-5 text-zinc-600" />
-                              )}
-                            </div>
+                                  <span
+                                    className="h-2.5 w-2.5 rounded-full"
+                                    style={{
+                                      backgroundColor: MARUNOUCHI_COLOR,
+                                    }}
+                                  />
 
-                            <p
-                              lang="ja"
-                              className="mt-5 text-xl font-black tracking-tight text-zinc-950"
-                            >
-                              {info?.ja ?? `${directionKey}方面`}
-                            </p>
+                                  <span
+                                    className="text-sm font-black"
+                                    style={{ color: MARUNOUCHI_COLOR }}
+                                  >
+                                    {info?.code ?? "M"}
+                                  </span>
 
-                            <p
-                              lang="ko"
-                              className="mt-1 text-sm font-medium text-zinc-500"
-                            >
-                              {info?.ko ?? `${directionKey} 방면`}
-                            </p>
+                                  {right && (
+                                    <ArrowRight className="h-5 w-5 text-zinc-500" />
+                                  )}
+                                </div>
 
-                            <Separator className="my-5" />
+                                <p
+                                  lang="ja"
+                                  className="mt-5 text-xl font-black tracking-tight text-zinc-950"
+                                >
+                                  {info?.ja ?? `${directionKey}方面`}
+                                </p>
 
-                            <div className="mb-3 flex items-center justify-between">
-                              <span className="text-xs font-bold text-zinc-400">
-                                次の電車 · 다음 열차
-                              </span>
-                            </div>
-
-                            {direction.upcoming.length > 0 ? (
-                              <div className="space-y-2">
-                                {direction.upcoming.map((train, trainIndex) => {
-                                  const destination =
-                                    train.destinationStations[0] ?? null;
-
-                                  return (
-                                    <div
-                                      key={`${train.trainNumber}-${train.departureTime}-${trainIndex}`}
-                                      className="flex items-center justify-between gap-3 rounded-2xl bg-zinc-50 px-3.5 py-3 text-left"
-                                    >
-                                      <div>
-                                        <p className="text-lg font-black tabular-nums text-zinc-950">
-                                          {train.departureTime ?? "--:--"}
-                                        </p>
-                                        <p className="mt-0.5 text-[11px] font-medium text-zinc-400">
-                                          {train.trainNumber ?? ""}
-                                        </p>
-                                      </div>
-
-                                      <div className="text-right">
-                                        <p
-                                          className="text-sm font-black"
-                                          style={{ color: MARUNOUCHI_COLOR }}
-                                        >
-                                          {train.minutesUntilDeparture !== null
-                                            ? `${train.minutesUntilDeparture}분 후`
-                                            : "—"}
-                                        </p>
-                                        <p
-                                          lang="ja"
-                                          className="mt-0.5 text-xs font-medium text-zinc-500"
-                                        >
-                                          {getDestinationName(destination)}行
-                                        </p>
-                                      </div>
-                                    </div>
-                                  );
-                                })}
+                                <p
+                                  lang="ko"
+                                  className="mt-1 text-sm font-medium text-zinc-500"
+                                >
+                                  {info?.ko ?? `${directionKey} 방면`}
+                                </p>
                               </div>
-                            ) : (
-                              <p className="rounded-2xl bg-zinc-50 px-4 py-5 text-center text-xs font-medium text-zinc-400">
-                                현재 시간 이후 열차가 없습니다.
-                              </p>
-                            )}
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+
+                              <Separator className="my-5" />
+
+                              <div className="mb-3">
+                                <span className="text-xs font-bold text-zinc-400">
+                                  次の電車 · 다음 열차
+                                </span>
+                              </div>
+
+                              {direction.upcoming.length > 0 ? (
+                                <div className="space-y-2">
+                                  {direction.upcoming
+                                    .slice(0, 3)
+                                    .map((train, trainIndex) => {
+                                      const destination =
+                                        train.destinationStations[0] ?? null;
+
+                                      return (
+                                        <div
+                                          key={`${train.trainNumber}-${train.departureTime}-${trainIndex}`}
+                                          className="flex min-h-[68px] items-center justify-between gap-4 rounded-2xl bg-zinc-50 px-4 py-3"
+                                        >
+                                          <div className="min-w-0">
+                                            <p className="text-xl font-black leading-none tabular-nums text-zinc-950">
+                                              {train.departureTime ?? "--:--"}
+                                            </p>
+                                            <p className="mt-2 text-xs font-medium text-zinc-400">
+                                              {train.trainNumber ?? ""}
+                                            </p>
+                                          </div>
+
+                                          <div className="min-w-0 text-right">
+                                            <p
+                                              className="text-sm font-black"
+                                              style={{
+                                                color: MARUNOUCHI_COLOR,
+                                              }}
+                                            >
+                                              {train.minutesUntilDeparture !==
+                                              null
+                                                ? `${train.minutesUntilDeparture}분 후`
+                                                : "—"}
+                                            </p>
+
+                                            <p
+                                              lang="ja"
+                                              className="mt-1 truncate text-xs font-medium text-zinc-600"
+                                            >
+                                              {getDestinationName(destination)}
+                                              行
+                                            </p>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                </div>
+                              ) : (
+                                <div className="rounded-2xl bg-zinc-50 px-4 py-6 text-center">
+                                  <p className="text-xs font-medium text-zinc-400">
+                                    현재 시간 이후 열차가 없습니다.
+                                  </p>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
                   </div>
                 ) : (
                   <Card className="rounded-3xl border-dashed shadow-none">
-                    <CardContent className="p-7 text-center text-sm font-medium text-zinc-500">
-                      시간표 정보를 불러오지 못했습니다.
+                    <CardContent className="p-7 text-center">
+                      <p className="text-sm font-medium text-zinc-500">
+                        시간표 정보를 불러오지 못했습니다.
+                      </p>
                     </CardContent>
                   </Card>
                 )}
