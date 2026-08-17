@@ -30,7 +30,8 @@ const METRO_LINES = [
     from: "北千住",
     to: "中目黒",
     color: "#B5B5AC",
-    ready: false,
+    href: "/hibiya",
+    ready: true,
   },
   {
     code: "T",
@@ -39,7 +40,8 @@ const METRO_LINES = [
     from: "中野",
     to: "西船橋",
     color: "#009BBF",
-    ready: false,
+    href: "/tozai",
+    ready: true,
   },
   {
     code: "C",
