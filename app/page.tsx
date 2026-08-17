@@ -80,7 +80,8 @@ const METRO_LINES = [
     from: "目黒",
     to: "赤羽岩淵",
     color: "#00AC9B",
-    ready: false,
+    href: "/namboku",
+    ready: true,
   },
   {
     code: "F",
