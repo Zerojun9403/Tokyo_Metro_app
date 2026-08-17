@@ -20,7 +20,8 @@ const METRO_LINES = [
     from: "荻窪",
     to: "池袋",
     color: "#F62E36",
-    ready: false,
+    href: "/marunouchi",
+    ready: true,
   },
   {
     code: "H",
