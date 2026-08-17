@@ -90,7 +90,8 @@ const METRO_LINES = [
     from: "和光市",
     to: "渋谷",
     color: "#9C5E31",
-    ready: false,
+    href: "/fukutoshin",
+    ready: true,
   },
 ] as const;
 
