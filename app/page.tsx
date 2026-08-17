@@ -50,7 +50,8 @@ const METRO_LINES = [
     from: "代々木上原",
     to: "北綾瀬",
     color: "#00BB85",
-    ready: false,
+    href: "/chiyoda",
+    ready: true,
   },
   {
     code: "Y",
@@ -59,7 +60,8 @@ const METRO_LINES = [
     from: "和光市",
     to: "新木場",
     color: "#C1A470",
-    ready: false,
+    href: "/yurakucho",
+    ready: true,
   },
   {
     code: "Z",
@@ -68,7 +70,8 @@ const METRO_LINES = [
     from: "渋谷",
     to: "押上",
     color: "#8F76D6",
-    ready: false,
+    href: "/hanzomon",
+    ready: true,
   },
   {
     code: "N",
